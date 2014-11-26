@@ -1,0 +1,17 @@
+#!/bin/sh
+# overwrites local DB with recent dump of remote
+# usage: script/db_pull wlc2013
+# defaults to staging
+
+set -e
+
+REMOTE=${1:-production}
+DATABASE_NAME=_development
+
+DUMP_NAME=tmp/$REMOTE.dump
+
+echo dumping latest $REMOTE db into local $DATABASE_NAME
+
+dropdb $DATABASE_NAME && createdb $DATABASE_NAME
+pg_restore -d $DATABASE_NAME --no-owner $DUMP_NAME -v
+
